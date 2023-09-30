@@ -1,0 +1,282 @@
+{
+    "title": "BrewKit build definition",
+    "type": "object",
+    "properties": {
+        "apiVersion": {
+            "description": "Api version of build definition",
+            "type": "string",
+            "enum": [
+                "brewkit/v1"
+            ]
+        },
+        "vars": {
+            "description": "Runtime variables",
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/$defs/var"
+            }
+        },
+        "targets": {
+            "description": "Build targets",
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/$defs/target"
+            }
+        }
+    },
+    "required": [ "apiVersion", "targets" ],
+    "$defs": {
+        "var": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "$ref": "#/$defs/components/from"
+                },
+                "platform": {
+                    "$ref": "#/$defs/components/platform"
+                },
+                "workdir": {
+                    "$ref": "#/$defs/components/workdir"
+                },
+                "env": {
+                    "$ref": "#/$defs/components/env"
+                },
+                "cache": {
+                    "$ref": "#/$defs/components/caches"
+                },
+                "copy": {
+                    "$ref": "#/$defs/components/copies"
+                },
+                "secrets": {
+                    "$ref": "#/$defs/components/secrets"
+                },
+                "network": {
+                    "$ref": "#/$defs/components/network"
+                },
+                "ssh": {
+                    "$ref": "#/$defs/components/ssh"
+                },
+                "command": {
+                    "$ref": "#/$defs/components/command"
+                }
+            },
+            "required": [
+                "from",
+                "workdir",
+                "command"
+            ]
+        },
+        "target": {
+            "description": "One of definition allows to describe compound target in simple way",
+            "type": "object",
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/targetOnlyWithDependsOn"
+                },
+                {
+                    "$ref": "#/$defs/targetWithStage"
+                }
+            ]
+        },
+
+        "targetOnlyWithDependsOn": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+
+        "targetWithStage": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "$ref": "#/$defs/components/from"
+                },
+                "dependsOn": {
+                    "$ref": "#/$defs/components/dependsOn"
+                },
+                "platform": {
+                    "$ref": "#/$defs/components/platform"
+                },
+                "workdir": {
+                    "$ref": "#/$defs/components/workdir"
+                },
+                "env": {
+                    "$ref": "#/$defs/components/env"
+                },
+                "cache": {
+                    "$ref": "#/$defs/components/caches"
+                },
+                "copy": {
+                    "$ref": "#/$defs/components/copies"
+                },
+                "secrets": {
+                    "$ref": "#/$defs/components/secrets"
+                },
+                "network": {
+                    "$ref": "#/$defs/components/network"
+                },
+                "ssh": {
+                    "$ref": "#/$defs/components/ssh"
+                },
+                "command": {
+                    "$ref": "#/$defs/components/command"
+                },
+                "output": {
+                    "$ref": "#/$defs/components/output"
+                }
+            },
+            "required": [
+                "from",
+                "workdir"
+            ]
+        },
+
+        "components": {
+            "dependsOn": {
+                "description": "Other targets on which the current one depends",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "from": {
+                "type": "string"
+            },
+            "platform": {
+                "description": "platform for multi-arch builds",
+                "type": "string"
+            },
+            "workdir": {
+                "description": "Working directory for current stage",
+                "type": "string"
+            },
+            "env": {
+                "description": "Env for current stage",
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
+            "cache": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique cache ID",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "Path for cache in container",
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "path" ]
+            },
+            "caches": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/components/cache"
+                        }
+                    },
+                    {
+                        "$ref": "#/$defs/components/cache"
+                    }
+                ]
+            },
+            "copy": {
+                "type": "object",
+                "properties": {
+                    "from": {
+                        "description": "Copy from others targets",
+                        "type": "string"
+                    },
+                    "src": {
+                        "description": "Source on host or other target",
+                        "type": "string"
+                    },
+                    "dst": {
+                        "description": "Destination in container",
+                        "type": "string"
+                    }
+                },
+                "required": [ "src", "dst" ]
+            },
+            "copies": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/components/copy"
+                        }
+                    },
+                    {
+                        "$ref": "#/$defs/components/copy"
+                    }
+                ]
+            },
+            "secret": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "Unique secret id",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "Secret mount path in container",
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "path" ]
+            },
+            "secrets": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/components/secret"
+                        }
+                    },
+                    {
+                        "$ref": "#/$defs/components/secret"
+                    }
+                ]
+            },
+            "ssh": {
+                "type": "object"
+            },
+            "network": {
+                "description": "Network for container",
+                "type": "string",
+                "enum": [
+                    "default",
+                    "none",
+                    "host"
+                ]
+            },
+            "command": {
+                "description": "Command that should be run in shell",
+                "type": "string"
+            },
+            "output": {
+                "description": "Definition of stage output",
+                "type": "object",
+                "properties": {
+                    "artifact": {
+                        "description": "Path to artifact in container",
+                        "type": "string"
+                    },
+                    "local": {
+                        "description": "Path on host to save artifact",
+                        "type": "string"
+                    }
+                },
+                "required": [ "artifact", "local" ]
+            }
+        }
+    }
+}

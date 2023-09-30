@@ -1,0 +1,29 @@
+{
+    "title": "BrewKit config",
+    "type": "object",
+    "properties": {
+        "secrets": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/secret"
+            }
+        }
+    },
+
+    "$defs": {
+        "secret": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Unique secret id",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "Path to secret on host",
+                    "type": "string"
+                }
+            },
+            "required": [ "id", "path" ]
+        }
+    }
+}
