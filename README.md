@@ -85,7 +85,6 @@ Build from source:
 go build -o ./bin/brewkit ./cmd/brewkit
 ```
 
-## Documentation and examples
+## Documentation
 
 * [Documentaion entrypoint](docs/readme.md)
-* [Examples](docs/examples)
